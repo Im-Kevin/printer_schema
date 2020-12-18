@@ -1,0 +1,456 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="page">
+    <xs:annotation>
+      <xs:documentation>一个模板的根节点,可用于配置一些基本信息</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="font-type" minOccurs="0">
+          <xs:complexType>
+            <xs:attribute name="fontType" type="xs:string">
+              <xs:annotation>
+                <xs:documentation>字体名称</xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="fontBaseWidth" type="xs:integer">
+              <xs:annotation>
+                <xs:documentation>字体大小1的时候的宽度</xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="fontBaseHeight" type="xs:integer">
+              <xs:annotation>
+                <xs:documentation>字体大小1的时候的宽度</xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="printer-config" minOccurs="0">
+          <xs:complexType>
+            <xs:attributeGroup ref="textGroup" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="eval-property" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>
+              计算字段
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:attribute name="attch" type="xs:string">
+              <xs:annotation>
+                <xs:documentation>
+                  表示依附到某个的路径上
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="propertyName" type="xs:string">
+              <xs:annotation>
+                <xs:documentation>
+                  计算属性名
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:group ref="control" minOccurs="1"></xs:group>
+      </xs:sequence>
+      <xs:attributeGroup ref="sizeRWidth" />
+    </xs:complexType>
+  </xs:element>
+  <xs:group name="control">
+    <xs:sequence>
+      <!-- 条形码 -->
+      <xs:element name="barcode" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>显示条形码组件</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attributeGroup ref="directive" />
+          <xs:attributeGroup ref="sizeRHeight" />
+          <xs:attributeGroup ref="offsetGroup" />
+          <xs:attributeGroup ref="bindingGroup" />
+          <xs:attribute name="lineWidth" type="xs:integer">
+            <xs:annotation>
+              <xs:documentation>
+                单条线的宽度
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="showText" type="xs:boolean">
+            <xs:annotation>
+              <xs:documentation>
+                是否显示文字
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <!-- End 条形码 -->
+      <!-- 二维码 -->
+      <xs:element name="qrcode" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>显示二维码组件</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attributeGroup ref="directive" />
+          <xs:attributeGroup ref="size" />
+          <xs:attributeGroup ref="offsetGroup" />
+          <xs:attributeGroup ref="bindingGroup" />
+          <xs:attribute name="ecc">
+            <xs:annotation>
+              <xs:documentation>
+                纠错等级
+              </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="L"></xs:enumeration>
+                <xs:enumeration value="M"></xs:enumeration>
+                <xs:enumeration value="Q"></xs:enumeration>
+                <xs:enumeration value="H"></xs:enumeration>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+          <xs:attribute name="dataSize" type="xs:int">
+            <xs:annotation>
+              <xs:documentation>
+                数据大小等级,越大可放的数据越多,但是识别率更低
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="showText" type="xs:boolean">
+            <xs:annotation>
+              <xs:documentation>
+                是否显示文字
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <!-- End 二维码 -->
+      <!-- 文字 -->
+      <xs:element name="text" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>显示文字的组件</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attributeGroup ref="directive" />
+          <xs:attributeGroup ref="size" />
+          <xs:attributeGroup ref="offsetGroup" />
+          <xs:attributeGroup ref="bindingGroup" />
+          <xs:attributeGroup ref="textGroup" />
+        </xs:complexType>
+      </xs:element>
+      <!-- End 文字 -->
+      <!-- 线条 -->
+      <xs:element name="line" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>显示线条的组件</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attributeGroup ref="directive" />
+          <xs:attributeGroup ref="size" />
+          <xs:attributeGroup ref="offsetGroup" />
+        </xs:complexType>
+      </xs:element>
+      <!-- End 线条 -->
+      <!-- 纵向排列 -->
+      <xs:element name="column" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>从上往下排列组件, 子组件的y属性代表相对上一个子组件的位置</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:group ref="control"></xs:group>
+          <xs:attributeGroup ref="directive" />
+          <xs:attributeGroup ref="size" />
+          <xs:attributeGroup ref="offsetGroup" />
+        </xs:complexType>
+      </xs:element>
+      <!-- End 纵向排列 -->
+      <!-- 横向排列 -->
+      <xs:element name="row" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>从左到右排列组件, 子组件的x属性代表相对上一个子组件的位置</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:group ref="control"></xs:group>
+          <xs:attributeGroup ref="directive" />
+          <xs:attributeGroup ref="size" />
+          <xs:attributeGroup ref="offsetGroup" />
+        </xs:complexType>
+      </xs:element>
+      <!-- End 横向排列 -->
+      <!-- 横向排列-循环 -->
+      <xs:element name="row-for" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>从左到右排列组件, 子组件的x属性代表相对上一个子组件的位置, 带有循环数组的功能,适用于多行渲染, y属性代表当前数据行的相对位置</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:group ref="control"></xs:group>
+          <xs:attributeGroup ref="directive" />
+          <xs:attributeGroup ref="size" />
+          <xs:attributeGroup ref="offsetGroup" />
+          <xs:attributeGroup ref="bindingListGroup" />
+        </xs:complexType>
+      </xs:element>
+      <!-- End 横向排列-循环 -->
+      <!-- 绝对布局 -->
+      <xs:element name="stack" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>绝对布局 使用子组件的x和y定位</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:group ref="control"></xs:group>
+          <xs:attributeGroup ref="size" />
+          <xs:attributeGroup ref="directive" />
+          <xs:attributeGroup ref="offsetGroup" />
+        </xs:complexType>
+      </xs:element>
+      <!-- End 绝对布局 -->
+      <!-- 表格 -->
+      <xs:element name="table" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>表格组件, 支持纵向合并, 边框线 子组件的x和y无效 子组件只支持table-column</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="table-column">
+              <xs:complexType>
+                <xs:attribute name="columnMerge" type="xs:boolean">
+                  <xs:annotation>
+                    <xs:documentation>
+                      是否合并
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:attribute>
+                <xs:attributeGroup ref="bindingGroup"></xs:attributeGroup>
+                <xs:attributeGroup ref="sizeRWidth"></xs:attributeGroup>
+                <xs:attributeGroup ref="textGroup"></xs:attributeGroup>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+          <xs:attributeGroup ref="directive" />
+          <xs:attributeGroup ref="sizeRHeight" />
+          <xs:attributeGroup ref="offsetGroup" />
+          <xs:attributeGroup ref="bindingListGroup"></xs:attributeGroup>
+          <xs:attribute name="borderTop" type="xs:integer">
+            <xs:annotation>
+              <xs:documentation>
+                外边框上
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="borderRight" type="xs:integer">
+            <xs:annotation>
+              <xs:documentation>
+                外边框右
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="borderBottom" type="xs:integer">
+            <xs:annotation>
+              <xs:documentation>
+                外边框下
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="borderLeft" type="xs:integer">
+            <xs:annotation>
+              <xs:documentation>
+                外边框左
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="borderHorizontalInside" type="xs:integer">
+            <xs:annotation>
+              <xs:documentation>
+                内边框横向
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="borderVerticalInside" type="xs:integer">
+            <xs:annotation>
+              <xs:documentation>
+                内边框纵向
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <!-- End 表格 -->
+
+
+    </xs:sequence>
+  </xs:group>
+  <!-- 大小 位置 -->
+  <xs:attributeGroup name="size">
+    <xs:attribute name="width" type="xs:integer">
+      <xs:annotation>
+        <xs:documentation>
+          相对位置X轴&#x000A;
+          父组件为Stack、Page、Column时代表相对父组件的位置&#x000A;
+          Row、RowFor代表相对上一个组件的位置&#x000A;
+          Table无效
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="height" type="xs:integer">
+      <xs:annotation>
+        <xs:documentation>
+          相对位置y轴&#x000A;
+          父组件为Stack、Page、Row时代表相对父组件的位置&#x000A;
+          RowFor代表当前行的相对位置&#x000A;
+          Column代表相对上一个组件的位置&#x000A;
+          Table无效
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="sizeRWidth">
+    <xs:attribute name="width" type="xs:integer" use="required">
+      <xs:annotation>
+        <xs:documentation>宽度</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="height" type="xs:integer">
+      <xs:annotation>
+        <xs:documentation>高度</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="sizeRHeight">
+    <xs:attribute name="width" type="xs:integer">
+      <xs:annotation>
+        <xs:documentation>宽度</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="height" type="xs:integer" use="required">
+      <xs:annotation>
+        <xs:documentation>高度</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="offsetGroup">
+    <xs:attribute name="x" type="xs:integer">
+      <xs:annotation>
+        <xs:documentation>
+          相对位置X轴&#x000A;
+          父组件为Stack、Page、Column时代表相对父组件的位置&#x000A;
+          Row、RowFor代表相对上一个组件的位置&#x000A;
+          Table无效
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="y" type="xs:integer">
+      <xs:annotation>
+        <xs:documentation>
+          相对位置y轴&#x000A;
+          父组件为Stack、Page、Row时代表相对父组件的位置
+          RowFor代表当前行的相对位置&#x000A;
+          Column代表相对上一个组件的位置&#x000A;
+          Table无效
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <!-- End 大小 位置 -->
+
+  <!-- Data -->
+  <xs:attributeGroup name="bindingGroup">
+    <xs:attribute name="binding" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          绑定的数据
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="format" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          格式化,需要和binding一起使用
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="bindingListGroup">
+    <xs:attribute name="binding" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          绑定的数据
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <!-- End Data -->
+  <!-- 文字 -->
+  <xs:attributeGroup name="textGroup">
+    <xs:attribute name="align">
+      <xs:annotation>
+        <xs:documentation>文字位置</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="start">
+            <xs:annotation>
+              <xs:documentation>左侧</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="center">
+            <xs:annotation>
+              <xs:documentation>居中</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="end">
+            <xs:annotation>
+              <xs:documentation>右侧</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="fontType" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>字体</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="fontSize" type="xs:integer">
+      <xs:annotation>
+        <xs:documentation>字体大小</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="fontBlod" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>是否粗体</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="underline" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>是否删除线</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="lineSpace" type="xs:integer">
+      <xs:annotation>
+        <xs:documentation>行距</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="lineHeight" type="xs:integer">
+      <xs:annotation>
+        <xs:documentation>行高</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <!-- End 文字 -->
+
+  <!-- 指令 -->
+  <xs:attributeGroup name="directive">
+    <xs:attribute name="if" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          用于判断是否显示 填写具体条件 注: 不可使用于table-column
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <!-- End 指令 -->
+</xs:schema>
